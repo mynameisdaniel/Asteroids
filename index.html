@@ -17,10 +17,12 @@
 	 <script src="lib/asteroid.js"></script>
 </head>
 	<body>
+		
 		<div style="position:relative; margin-left: auto; margin-right: auto; width: 800px">
 	    <canvas id="game-canvas" style="background-color: black"></canvas>
+	    <div style="font-family: impact; text-align: left;"><h2>Can you break 100 points?<br>
+	    	Press 'J,I,K,L' to move. 'Space' to Fire</h2></div>
 		</div>
-
     <script>
     var canvasEl = document.getElementById("game-canvas");
 	  var ctx = canvasEl.getContext('2d');
@@ -29,18 +31,27 @@
 	  
 	  var game = new Asteroids.Game();
 	  key('w', function (){
+	  	play_multi_sound('multiaudio1');
 	  	game.ship[0].fireBullet([0,-5]);
 	  });
 	  key('a', function (){
+	  	play_multi_sound('multiaudio1');
 	  	game.ship[0].fireBullet([-5,0]);
 	  });
 	  key('s', function (){
+	  	play_multi_sound('multiaudio1');
 	  	game.ship[0].fireBullet([0,5]);
 	  });
  	  key('d', function (){
+ 	    play_multi_sound('multiaudio1');
+	  	game.ship[0].fireBullet([5,0]);
+	  });
+	  key('space', function (){
+ 	    play_multi_sound('multiaudio1');
 	  	game.ship[0].fireBullet([5,0]);
 	  });
 	  key('j', function (){
+
 	  	game.ship[0].powerLeft();
 	  });
 	  key('i', function (){
@@ -55,5 +66,28 @@
 	  var gv = new Asteroids.GameView(game, ctx);
 	  gv.start();
     </script>
+
+<audio id="multiaudio1" src="audio/tos-photon-torpedo-1.mp3" preload="auto"></audio>
+<script type="text/javascript">
+	var channel_max = 10;										// number of channels
+	audiochannels = new Array();
+	for (a=0;a<channel_max;a++) {									// prepare the channels
+		audiochannels[a] = new Array();
+		audiochannels[a]['channel'] = new Audio();						// create a new audio object
+		audiochannels[a]['finished'] = -1;							// expected end time for this channel
+	}
+	function play_multi_sound(s) {
+		for (a=0;a<audiochannels.length;a++) {
+			thistime = new Date();
+			if (audiochannels[a]['finished'] < thistime.getTime()) {			// is this channel finished?
+				audiochannels[a]['finished'] = thistime.getTime() + document.getElementById(s).duration*1000;
+				audiochannels[a]['channel'].src = document.getElementById(s).src;
+				audiochannels[a]['channel'].load();
+				audiochannels[a]['channel'].play();
+				break;
+			}
+		}
+	}
+</script>
 	</body>
 </html>
